@@ -8,8 +8,8 @@
 # custom files:
 #     import DOME_imaging_utilities as DOMEutil
 # The manager classes can then be accessed and used by replicating a similar code structure as in
-# the "main()" function below, where "DOME_CameraManager()" and "DOME_PinManager()" should be
-# replaced with "DOMEutil.DOME_CameraManager()" and "DOMEutil.DOME_PinManager()" respectively.
+# the "main()" function below, where "CameraManager()" and "PinManager()" should be replaced with
+# "DOMEutil.CameraManager()" and "DOMEutil.PinManager()" respectively.
 # #################################################################################################
 # Authors = Matthew Uppington <mu15531@bristol.ac.uk>
 # Affiliation = Farscope CDT, University of Bristol, University of West England
@@ -71,7 +71,7 @@ class ConflictingPinLabel(Exception):
         super().init(error_message)
 
 
-class DOME_CameraManager:
+class CameraManager:
     '''
     Class for managing operations with the Raspberry Pi camera.
     '''
@@ -127,21 +127,24 @@ class DOME_CameraManager:
         # Allow time for the camera to warm up.
         time.sleep(2)
     
+    
     def __enter__(self):
         """
         Compatibility method to allow class to be used in "with" statements.
         ---
         Outputs
-            self : DOME_CameraManager
-                The instance of the DOME_CameraManager class.
+            self : CameraManager
+                The instance of the CameraManager class.
         """
         return self
+    
     
     def __exit__(self, type, value, traceback):
         '''
         Close camera object upon exiting a "with" statement.
         '''
         self.camera.close()
+    
     
     def store_settings(self, mode_name : str, mode_settings : dict):
         '''
@@ -163,6 +166,7 @@ class DOME_CameraManager:
                     self.settings[mode_name][key] = value
         # Empty memory of last used settings to account for potential overwrites.
         self.last_used_mode = ''
+    
     
     def load_settings(self, mode_name : str):
         '''
@@ -202,6 +206,7 @@ class DOME_CameraManager:
             # Update memory of last used settings.
             self.last_used_mode = mode_name
     
+    
     def capture_image(self, mode_name='default'):
         '''
         Capture a still image of the camera's field of view using video port.
@@ -223,6 +228,7 @@ class DOME_CameraManager:
             image = frame.array
             break
         return image
+    
     
     def save_image(self, file_name : str, image : np.ndarray):
         '''
@@ -253,7 +259,7 @@ class DOME_CameraManager:
         self.camera.stop_preview()
 
 
-class DOME_PinManager:
+class PinManager:
     '''
     Class for managing the output voltages across Raspberry Pi gpio pins.
     '''
@@ -275,15 +281,17 @@ class DOME_PinManager:
                 self.add_pin_label(pin_label, pin_number)
                 GPIO.setup(pin_number, GPIO.OUT)
     
+    
     def __enter__(self):
         """
         Compatibility method to allow class to be used in "with" statements.
         ---
         Outputs
-            self : DOME_PinManager
-                The instance of the DOME_PinManager class.
+            self : PinManager
+                The instance of the PinManager class.
         """
         return self
+    
     
     def __exit__(self, type, value, traceback):
         '''
@@ -291,6 +299,7 @@ class DOME_PinManager:
         '''
         for pin_number in self.pins.values():
             GPIO.output(pin_number, GPIO.LOW)
+    
     
     def add_pin_label(self, label : str, number : int):
         '''
@@ -340,6 +349,7 @@ def set_system_time(date : str):
     '''
     os.system(f'sudo date -s \'{date}\'')
 
+
 def main(save_directory : str, camera_modes : dict, pin_labels : dict, terminate='exit'):
     '''
     Allows for some basic functionalities to be tested with the Raspberry Pi camera and the gpio
@@ -359,8 +369,8 @@ def main(save_directory : str, camera_modes : dict, pin_labels : dict, terminate
     '''
     date_time_format = 'YYYY-MM-DD HH:MM:SS'
     picture = np.zeros((10, 10, 3), dtype=np.uint8)
-    with DOME_CameraManager(save_directory, camera_modes) as DOMEcam, \
-            DOME_PinManager(pin_labels) as DOMEgpio:
+    with CameraManager(save_directory, camera_modes) as DOMEcam, \
+            PinManager(pin_labels) as DOMEgpio:
         while True:
             instruction = input('Please specify an operation to test:\n')
             instruction_segments = instruction.split(' ')
@@ -415,8 +425,3 @@ if __name__ == '__main__':
     example_camera_modes = {'myUVmode': {'shutter speed': 6000000}}
     example_gpio_labels = {'UV': 12, 'BrightField': 18}
     main(image_folder, example_camera_modes, example_gpio_labels)
-#         default_settings = {'resolution': (1920, 1088),
-#                             'iso': 800,
-#                             'shutter speed': 300000,
-#                             'exposure mode': 'spotlight',
-#                             'framerate': 30}

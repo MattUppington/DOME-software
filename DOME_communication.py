@@ -11,8 +11,7 @@
 # The code can then be imported using the following command at the begining of the custom files:
 #     import DOME_communications as DOMEcomm
 # A communication channel can then be set up using similar code structures to those outlined in the
-# "main()" function below, where "DOME_NetworkNode()" should be replaced with
-# "DOMEcomm.DOME_NetworkNode()".
+# "main()" function below, where "NetworkNode()" should be replaced with "DOMEcomm.NetworkNode()".
 # #################################################################################################
 # Authors = Matthew Uppington <mu15531@bristol.ac.uk>
 # Affiliation = Farscope CDT, University of Bristol, University of West England
@@ -26,7 +25,7 @@ import functools as ft
 import time
 
 
-class DOME_NetworkNode:
+class NetworkNode:
     """
     Class for setting up a communication channel between the DOME's camera Pi and projector Pi.
     ---
@@ -66,8 +65,8 @@ class DOME_NetworkNode:
         Compatibility method to allow class to be used in "with" statements.
         ---
         Outputs
-            self : DOME_NetworkNode
-                The instance of the DOME_NetworkNode class.
+            self : NetworkNode
+                The instance of the NetworkNode class.
         """
         return self
     
@@ -262,7 +261,7 @@ def main(i_am : str, terminate = 'exit'):
     """
     if i_am == 'host':
         # Example setup for DOME camera Pi script.
-        with DOME_NetworkNode() as camera_node:
+        with NetworkNode() as camera_node:
             print('Listening for connection...')
             camera_node.accept_connection()
             print('... connection accepted!')
@@ -322,7 +321,7 @@ def main(i_am : str, terminate = 'exit'):
                 print(f'Projector Pi said: {response}')
     elif i_am == 'client':
         # Example setup for DOME projector Pi script.
-        with DOME_NetworkNode() as projector_node:
+        with NetworkNode() as projector_node:
             print('Requesting connection...')
             projector_node.establish_connection()
             print('... connection established!')

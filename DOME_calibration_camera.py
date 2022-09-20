@@ -18,7 +18,6 @@ import json
 import time
 
 
-
 class SettingsFileFormatError(Exception):
     '''
     Exception class for handling errors raised when calibration settings cannot be read from a
@@ -315,8 +314,8 @@ def main(margin : float, pixelation : list, camera_grid_spacing : int,
     response = None
     bright_lines = None
     with DOMEcomm.DOME_NetworkNode() as dome_pi4node, \
-            DOMEutil.DOME_CameraManager() as dome_camera, \
-            DOMEutil.DOME_PinManager() as dome_gpio:
+            DOMEutil.CameraManager() as dome_camera, \
+            DOMEutil.PinManager() as dome_gpio:
         try:
             if not camera_settings is None:
                 camera_mode = 'custom'
@@ -497,15 +496,16 @@ def main(margin : float, pixelation : list, camera_grid_spacing : int,
                               f'first, followed by the SQUARE LENGTH for the camera grid. The ' \
                               f'lengths can be entered according to any unit of measurement, ' \
                               f'such as number of screen pixels - for example, the camera grid ' \
-                              f'square length was {settings["spacing cam"]} screen pixels.\n--- ' \
+                              f'square length was {settings["spacing cam"]} screen pixels. When ' \
+                              f'the values have been entered, type next to continue.\n--- ' \
                               f'Projector grid square length = {length_proj} ; float (positive, ' \
                               f'non-zero number)\n---Camera grid square length = {length_cam} ; ' \
-                              f'float (positive, non-zero number)\n' 
+                              f'float (positive, non-zero number)\n'
                     user_args, step = custom_input(message, step)
                     if len(user_args) != 2:
                         continue
                     try:
-                        [length_cam, length_proj] = [float(arg) for arg in user_args]
+                        [length_proj, length_cam] = [float(arg) for arg in user_args]
                     except ValueError:
                         print('Please specify numerical values.')
                     else:
@@ -605,9 +605,6 @@ def main(margin : float, pixelation : list, camera_grid_spacing : int,
                     print(f'Calibration complete.\n--- Affine transform saved to {mapping_filename}')
                     dome_pi4node.transmit('all' + 3 * ' 0')
                     response = dome_pi4node.receive()
-                    
-                    
-                    
                     step += 1
         finally:
             dome_pi4node.transmit('exit')
@@ -615,12 +612,6 @@ def main(margin : float, pixelation : list, camera_grid_spacing : int,
 
 
 if __name__ == '__main__':
-#     with open('12345.json', 'w') as file:
-#         json.dump({'a': 1}, file)
-#     bright = 128
-#     thresh = 235
-#     region_width = 12
-#     scan_increment = 5
     default_margin = 0.33
     default_pixelation = [10, 10]
     default_spacing_cam = 100

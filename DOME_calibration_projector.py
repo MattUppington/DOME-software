@@ -24,7 +24,7 @@ def main(width=854, height=480):
                           cv2.WINDOW_FULLSCREEN)
     cv2.imshow('Pattern', pattern)
     cv2.waitKey(0)
-    with DOMEcomm.DOME_NetworkNode() as dome_pi0node:
+    with DOMEcomm.NetworkNode() as dome_pi0node:
         dome_pi0node.establish_connection()
         while True:
             message = dome_pi0node.receive()
