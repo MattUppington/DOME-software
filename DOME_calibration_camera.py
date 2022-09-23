@@ -313,7 +313,7 @@ def main(margin : float, pixelation : list, camera_grid_spacing : int,
     camera_mode = 'default'
     response = None
     bright_lines = None
-    with DOMEcomm.DOME_NetworkNode() as dome_pi4node, \
+    with DOMEcomm.NetworkNode() as dome_pi4node, \
             DOMEutil.CameraManager() as dome_camera, \
             DOMEutil.PinManager() as dome_gpio:
         try:
