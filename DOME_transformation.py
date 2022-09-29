@@ -317,7 +317,7 @@ def transform_image(image : np.ndarray, transform_matrix : np.ndarray, dimension
     # Reflecting axes is necessary because cv2 package considers origin at top left corner of...
     # ...image with x axis along width and y axis down height. This accounts for the fact that...
     # ...rotations are also considered as positive clockwise by cv2 package.
-    new_image = cv2.warpAffine(image, compatible_transform[0:2, :], [dimensions[1], dimensions[0]])
+    new_image = cv2.warpAffine(image, compatible_transform[0:2, :], (dimensions[1], dimensions[0]))
     return new_image
 
 
