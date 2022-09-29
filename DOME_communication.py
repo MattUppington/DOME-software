@@ -84,9 +84,19 @@ class NetworkNode:
         Accept a connection request.
         """
 #         try:
-        self.server.bind(('', self.port))
+        bound = False
+        while not bound:
+            try:
+                self.server.bind(('', self.port))
+                print('Address bound successfully.')
+                bound = True
+            except OSError:
+                print('Failed to bind to address, reattempting in 10s...')
+                time.sleep(10)
         self.server.listen()
+        print('Listening for connection...')
         self.connection, address = self.server.accept()
+        print('Connection accepted.')
 #         except OSError:
 #             print(f'WARNING: Port {self.port} is still in a TIME_WAIT state, please restart the ' \
 #                   f'environment and try again. The port should exit the TIME_WAIT state ' \
