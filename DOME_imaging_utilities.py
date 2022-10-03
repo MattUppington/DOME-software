@@ -327,10 +327,11 @@ class PinManager:
             action
                 True, 1, 'on' or 'high' to turn on; False, 0, 'off' or 'low' to turn off.
         '''
-        if action.lower() == 'on' or action.lower() == 'high':
-            turn_on = True
-        elif action.lower() == 'off' or action.lower() == 'low':
-            turn_on = False
+        if isinstance(action, str):
+            if action.lower() == 'on' or action.lower() == 'high':
+                turn_on = True
+            elif action.lower() == 'off' or action.lower() == 'low':
+                turn_on = False
         else:
             turn_on = bool(action)
         if turn_on:
@@ -380,7 +381,7 @@ def main(save_directory : str, camera_modes : dict, pin_labels : dict, terminate
                 break
             # Example instructions to test different operations.
             elif instruction_segments[0] == 'capture':
-                picture = DOMEcam.capture_image()
+                picture = DOMEcam.capture_image('myUVmode')
                 cv2.imshow('Captured image', picture)
                 cv2.waitKey(0)
             elif instruction_segments[0] == 'save':
